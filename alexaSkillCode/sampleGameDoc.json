@@ -1,0 +1,7 @@
+{
+	"23_lions": {
+		"board": ["w_rook","w_horse","w_bishop","w_queen","w_king","w_bishop","w_horse","w_rook","w_pawn","w_pawn","w_pawn","w_pawn","w_pawn","w_pawn","w_pawn","w_pawn","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","b_pawn","b_pawn","b_pawn","b_pawn","b_pawn","b_pawn","b_pawn","b_pawn","b_rook","b_horse","b_bishop","b_queen","b_king","b_bishop","b_horse","b_rook"],
+		"white": "alexa1",
+		"black": "alexa2"
+	}
+}
