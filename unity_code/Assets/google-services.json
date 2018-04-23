@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "28252317189",
+    "firebase_url": "https://testwizardchess.firebaseio.com",
+    "project_id": "testwizardchess",
+    "storage_bucket": "testwizardchess.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:28252317189:android:5dc3f1b3fbe17683",
+        "android_client_info": {
+          "package_name": "com.EmberBlue.ARChess"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "28252317189-rq3uvi9qcjsldfp59pdk1cus871ve1to.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1nE8KNOrfzJlTZpWWgLJjhpqQAcTfGlw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="firebase_database_url" translatable="false">https://testwizardchess.firebaseio.com</string>
+  <string name="gcm_defaultSenderId" translatable="false">28252317189</string>
+  <string name="google_storage_bucket" translatable="false">testwizardchess.appspot.com</string>
+  <string name="project_id" translatable="false">testwizardchess</string>
+  <string name="google_api_key" translatable="false">AIzaSyD1nE8KNOrfzJlTZpWWgLJjhpqQAcTfGlw</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyD1nE8KNOrfzJlTZpWWgLJjhpqQAcTfGlw</string>
+  <string name="google_app_id" translatable="false">1:28252317189:android:5dc3f1b3fbe17683</string>
+  <string name="default_web_client_id" translatable="false">28252317189-rq3uvi9qcjsldfp59pdk1cus871ve1to.apps.googleusercontent.com</string>
+</resources>
