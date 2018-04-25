@@ -48,7 +48,7 @@ var handlers = {
 			this.emit(':askWithCard',prompt,reprompt,cardTitle,cardContent);
     }
     else{
-		var prompt = "Welcome back to wizard chess. Please tell the code of the game you want to join or continue game."
+		var prompt = "Welcome back to wizard chess. Please tell the code of the game you want to join or continue game. Connect a new device by saying \"connect new device\""
 		  	var reprompt = "please tell the code"
 		  	//this.response.speak(codeNumber+"_"+codeAnimal);
 			this.emit(':ask',prompt,reprompt);
