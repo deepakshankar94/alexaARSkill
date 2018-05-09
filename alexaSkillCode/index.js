@@ -14,6 +14,12 @@ var firebaseConfig = {
     messagingSenderId: "959865758259"
 }
 
+var gameState = {
+	"WAITING_SYNC":0,
+	"WAITING_GAME_CODE":1,
+	"IN_A_MATCH" :2
+}
+
 firebase.initializeApp(firebaseConfig);
 
 
@@ -38,6 +44,9 @@ var handlers = {
     this.response.cardRenderer("Wizard chess app link","link to the app : https://drive.google.com/file/d/1ecJkKnmOge_wNTgry7Spw9pJoxJvQQca/view?usp=sharing")
     //get user code for the first time and pair with phone 
     //test code for new user flow 
+    if(this.attributes.gameState = gameState.IN_A_MATCH){
+    	this.attributes.gameState = gameState.WAITING_GAME_CODE;
+    }
     if(this.attributes.isSynced !== true) {
     		
 		  	var prompt = "Welcome to Wizard chess. Please download the wizard chess app from the playstore and share the code displayed. Accio code."
@@ -101,6 +110,7 @@ var handlers = {
 
 						var prompt = "Alexa and App have been synced. Please create a new game or tell the code of game to join"
 						var reprompt = "please tell the code"
+						self.attributes.gameState = gameState.WAITING_GAME_CODE
 			  			//this.response.speak(codeNumber+"_"+codeAnimal);
 						self.emit(':ask',prompt,reprompt);
 					})
@@ -116,6 +126,10 @@ var handlers = {
 		var self = this;
 	    firebase.database().ref("gameColl/"+code).once('value').then(function(snapshot){
 			var gameData = snapshot.val();
+			console.log(JSON.stringify(snapshot.val()));
+
+			console.log(JSON.stringify(snapshot));
+
 			if(gameData == null){
 				var prompt = "the code "+codeNumber+" "+codeAnimal+" you said is incorrect. Please Check the code and say it again"
 				var reprompt = "please tell the code"
@@ -176,6 +190,7 @@ var handlers = {
 					.then(()=>{
 						var prompt = "Game has been connected. Make your move."
 						var reprompt = "please tell the move you want to make"
+						self.attributes.gameState = gameState.IN_A_MATCH;
 						self.emit(':ask',prompt,reprompt);
 					});
 				})
@@ -237,18 +252,31 @@ var handlers = {
 	  			}
 	  		}
 	  		if(moves.length == 0){
-	  			var prompt = "No valid moves available from "+codeFrom+". Please make a different move."
-				var reprompt = "please tell the new move"
+	  			if(chess.in_checkmate())
+	  			{
+	  				var prompt = "Game over. Please tell the code of a new game or exit";
+	  				var reprompt = prompt;
+	  			}
+	  			else if(chess.in_check()){
+	  				var prompt = "No valid moves available from "+codeFrom+" during check. Please make a different move."
+					var reprompt = "please tell the new move"
+	  				
+	  			}
+	  			else{
+	  				var prompt = "No valid moves available from "+codeFrom+". Please make a different move."	
+					var reprompt = "please tell the new move"
+	  				
+	  			}
 				self.emit(':ask',prompt,reprompt);
 	  		}
 	  		else if(!moveValid){
 	  			const slotToElicit = 'moveToCode';
-	            var speechOutput = 'The move you made is invalid. Please choose a move from ';
+	            var speechOutput = 'The move you made is invalid. Please choose a move to ';
 	            for(var i=0;i<Math.min(5,moves.length);i++){
 	            	speechOutput += moves[i].match(/[a-h][1-8]/gi)+ " ";
 	            }
-	            const repromptSpeech = speechOutput + "codeTo: " + codeTo;
-	            this.emit(':elicitSlot', slotToElicit, speechOutput+"codeTo: " + codeTo + (moves[0].match(/[a-hA-H][1-8]/gi))  + (moves[1].match(/[a-hA-H][1-8]/gi)), repromptSpeech);
+	            const repromptSpeech = speechOutput
+	            this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
 	  		}
 	  		else{
 	  			chess.move({ from: codeFrom, to: codeTo })
@@ -305,8 +333,9 @@ var handlers = {
 				}
 				else{
 					var prompt = winner + " won the game.";
-					var reprompt = "please tell the code";
-					self.emit(':tell',prompt);
+					this.attributes.gameState = gameState.WAITING_GAME_CODE;
+					var reprompt = "please tell the code of a new game to play or say 'exit'";
+					self.emit(':ask',prompt,reprompt);
 				}
 			});	
 	  	}
@@ -334,7 +363,59 @@ var handlers = {
       this.response.speak('Ok, let\'s play again soon.');
       this.emit(':responseReady');
   },
+ 
+  // help intetn
+  'AMAZON.HelpIntent': function() {
+  	if(this.attributes.isSynced !== true){
+  		var prompt = "tell the code on your app to start a new game"
+		var reprompt = prompt;
+  	}
+  	else if(this.attributes.gameState == gameState.WAITING_GAME_CODE){
+  		var prompt = "Say continue game to play your old session \
+      	or tell the code on your app to start a new game "
+		var reprompt = prompt;
+  	}
+  	else if(this.attributes.gameState == gameState.WAITING_GAME_CODE){
+  		var prompt = "make your move by saying move f2 to f3 etc."
+		var reprompt = prompt;
+  	}
+  	else{
+		var prompt = "Say continue game to play your old session \
+      	or tell the code on your app to start a new game \
+      	or make your move by saying move f2 to f3 etc."
 
+		var reprompt = prompt;
+  	}
+	
+	this.emit(':ask',prompt,reprompt);
+
+
+  },
+  'AMAZON.FallbackIntent': function () {
+	console.log('Unhandled function');
+  	if(this.attributes.isSynced !== true){
+  		var prompt = "tell the code on your app to start a new game"
+		var reprompt = prompt;
+  	}
+  	else if(this.attributes.gameState == gameState.WAITING_GAME_CODE){
+  		var prompt = "Say continue game to play your old session \
+      	or tell the code on your app to start a new game "
+		var reprompt = prompt;
+  	}
+  	else if(this.attributes.gameState == gameState.WAITING_GAME_CODE){
+  		var prompt = "make your move by saying move f2 to f3 etc."
+		var reprompt = prompt;
+  	}
+  	else{
+		var prompt = "Say continue game to play your old session \
+      	or tell the code on your app to start a new game \
+      	or make your move by saying move f2 to f3 etc."
+
+		var reprompt = prompt;
+  	}
+	
+	this.emit(':ask',prompt,reprompt);
+  },
   // Save state
   'SessionEndedRequest': function() {
     console.log('session ended!');
@@ -347,6 +428,7 @@ var handlers = {
     }
     delete this.attributes.gameData;
     console.log(this.attributes)
+    this.attributes.gameState = gameState.WAITING_GAME_CODE;
     this.emit(':saveState', true);
   }
 };
